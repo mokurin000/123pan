@@ -79,5 +79,6 @@ NOFOLLOW=(
     --remove-output \
     "${EXTRA_ARGS[@]}" \
     --output-filename="$OUT_NAME" \
+    --unstripped \
     "$@"
 )
