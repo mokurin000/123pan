@@ -80,8 +80,11 @@ rm -rf Lib/site-packages/PySide6/Qt6Designer*.dll
 # C++ headers, 1MiB
 rm -rf Lib/site-packages/PySide6/include
 
-# Translations
-rm -rf Lib/site-packages/PySide6/translations/{assistant,designer,linguist,qtwebengine,qtlocation}_*.qm
+# Translations, scripts
+rm -rf Lib/site-packages/PySide6/scripts
+rm -rf Lib/site-packages/PySide6/translations
+# Unused json files
+rm -rf Lib/site-packages/PySide6/metatypes/
 
 # Other things
 rm -rf Lib/site-packages/PySide6/Qt*Bluetooth*.{dll,pyd}
@@ -116,8 +119,6 @@ rm -rf Lib/site-packages/PySide6/Qt*WebView*.{dll,pyd}
 rm -rf Lib/site-packages/pythonwin
 rm -rf Lib/site-packages/PyWin32.chm
 
-# Unused json files
-rm -rf Lib/site-packages/PySide6/metatypes/
 # 12.8 MiB
 for entry in assetimporters canbus designer generic vectorimageformats webview \
     geometryloaders geoservices networkinformation platforminputcontexts \
@@ -126,6 +127,19 @@ for entry in assetimporters canbus designer generic vectorimageformats webview \
     rm -rf Lib/site-packages/PySide6/plugins/"${entry}"
 done
 
+(
+    cd Lib/site-packages
+    packages=(
+        "requests" "qframelesswindow" "qfluentwidgets"
+        "qrcode" "darkdetect" "colorama" "app" "idna"
+        "adodbapi" "certifi"
+    )
+
+    7z a -tzip -mx=9 -mfb=258 -sdel \
+        ../library.zip \
+        "${packages[@]}" *.dist-info
+)
+
 # Remove python interceptors
 rm Lib/python{,w}.exe Lib/python${python_num_ver}._pth
 mv Lib/python${python_num_ver}.dll Lib/python3.dll .
@@ -133,6 +147,7 @@ mv Lib/python${python_num_ver}.dll Lib/python3.dll .
 cat > "python${python_num_ver}._pth" <<EOF
 Lib/
 Lib/python${python_num_ver}.zip
+Lib/library.zip
 import site
 EOF
 
